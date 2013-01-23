@@ -287,7 +287,8 @@ body {
 	margin: 15px auto;
 
 	text-align: left;
-	font-size: 0.55em;
+	/*font-size: 0.55em;*/
+	font-size: 0.45em;
 	font-family: monospace;
 	line-height: 1.2em;
 
@@ -302,7 +303,7 @@ body {
 .reveal code {
 	font-family: monospace;
 	overflow: auto;
-	max-height: 400px;
+	max-height: 900px;
 }
 
 .reveal table th,

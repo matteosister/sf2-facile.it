@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>Symfony2@Facile.it</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -68,13 +68,77 @@
                     <h2>Console</h2>
                     <h4>Scrivere comandi per console in php</h4>
                     <p><small>gestione di task per cron, manutenzioni al db etc</small></p>
+                </section>
+
+                <section>
+                    <pre><code contenteditable class="php">class GreetCommand extends Command
+{
+    protected function configure()
+    {
+        $this
+            ->setName('demo:greet')
+            ->setDescription('Greet someone')
+            ->addArgument(
+                'name',
+                InputArgument::OPTIONAL,
+                'Who do you want to greet?'
+            )
+            ->addOption(
+               'yell',
+               null,
+               InputOption::VALUE_NONE,
+               'If set, the task will yell in uppercase letters'
+            )
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $name = $input->getArgument('name');
+        if ($name) {
+            $text = 'Hello '.$name;
+        } else {
+            $text = 'Hello';
+        }
+
+        if ($input->getOption('yell')) {
+            $text = strtoupper($text);
+        }
+
+        $output->writeln($text);
+    }
+}</code></pre>
+                </section>
+
+                <section>
+                    <small>console.php</small>
+                    <pre><code class="php">#!/usr/bin/env php
+# app/console
+&lt;?php
+
+use Acme\DemoBundle\Command\GreetCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new GreetCommand);
+$application->run();
+
+</code></pre>
+                    <small>command line</small>
+                    <pre><code class="php">$ php console.php demo:greet Facile
+Hello Facile
+</code></pre>
+                </section>
+
+                <section>
+                    <h2>Console di Symfony2</h2>
                     <img src="images/console.png" />
                 </section>
 
                 <section>
                     <h2>Filesystem</h2>
                     <h4>Gestione filesystem</h4>
-                    <pre><code contenteditable>use Symfony\Component\Filesystem\Filesystem;
+                    <pre><code contenteditable class="php">use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 $fs = new Filesystem();
@@ -95,7 +159,7 @@ $fs->copy('image-ICC.jpg', 'image.jpg', true);</code></pre>
                 <section>
                     <h2>Process</h2>
                     <h4>Eseguire comandi come sub-process</h4>
-                    <pre><code>
+                    <pre><code class="php">
 use Symfony\Component\Process\Process;
 
 $process = new Process('ls -lsa');
@@ -113,7 +177,7 @@ print $process->getOutput();
                     <h2>Event Dispatcher</h2>
                     <h4>gestione di eventi (emitter, listenter e subscriber) dove non si può usare l'OO</h4>
                     <p><small>ridistribuzione di codice, plugin systems</small></p>
-                    <pre><code contenteditable>
+                    <pre><code contenteditable class="php">
 use Symfony\Component\EventDispatcher\EventDispatcher;
 $dispatcher = new EventDispatcher();
 
@@ -132,18 +196,73 @@ $dispatcher->dispatch(StoreEvents::STORE_ORDER, $event);
                 </section>
 
                 <section>
+                    <h2>Dom Crawler/CssSelector</h2>
+                    <p><small>crawler di documenti HTML, OO style (spider?)</small></p>
+                    <pre><code class="php">&lt;?php
+$crawler = new Symfony\Component\DomCrawler\Crawler($html);
+// xpath filter
+$crawler = $crawler->filterXPath('descendant-or-self::body/p');
+// css selector, alla jquery
+$crawler = $crawler->filter('body > p');
+$crawler = $crawler->filter('body > p')->reduce(function ($node, $i) {
+    // filter even nodes
+    return ($i % 2) == 0;
+});
+// fluent interface
+$crawler->filter('body > p')->eq(0);
+$crawler->filter('body > p')->first();
+$crawler->filter('body > p')->last();
+$crawler->filter('body > p')->siblings();
+$crawler->filter('body > p')->nextAll();
+$crawler->filter('body > p')->previousAll();
+$crawler->filter('body')->children();
+$crawler->filter('body > p')->parents();
+
+// form
+$form = $crawler->selectButton('validate')->form(array(
+    'name' => 'Ryan',
+));
+// settare valori sul form
+$form->setValues(array(
+    'registration[username]' => 'symfonyfan',
+    'registration[terms]'    => 1,
+));
+
+// get back an array of values - in the "flat" array like above
+$values = $form->getValues();
+
+// returns the values like PHP would see them,
+// where "registration" is its own array
+$values = $form->getPhpValues();
+</code></pre>
+                </section>
+
+                <section>
                     <h2>come si utilizzano?</h2>
-                    <pre><code>$ mkdir project
+                    <pre><code class="bash">$ mkdir project
 $ cd project
 $ composer require symfony/filesystem 2.1.*</code></pre>
-                    <p>composer crea la cartella vendor, scarica le dipendenze e crea l'autoloader</p>
-                    <p>possiamo usarlo nel nostro codice, basta includere l'autoloader</p>
-                    <pre><code contenteditable>include __DIR__.'/vendor/autoload.php';
+                    <p>composer crea la cartella vendor, scarica le dipendenze e crea un autoloader</p>
+                    <pre><code contenteditable class="php">include __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Filesystem\Filesystem;
 
 $fs = new Filesystem();
 $fs->mkdir('watta!');</code></pre>
+                </section>
+
+                <section>
+                    <h2>altri componenti</h2>
+                    <ul>
+                        <li class="fragment"><strong>HttpFoundation</strong> -- <em>il protocollo http object oriented</em></li>
+                        <li class="fragment"><strong>DependencyInjection</strong> -- <em>creazione di service container</em></li>
+                        <li class="fragment"><strong>Finder</strong> -- <em>ricercare file sul filesystem</em></li>
+                        <li class="fragment"><strong>ClassLoader</strong> -- <em>autoloader universale</em></li>
+                        <li class="fragment"><strong>Config</strong> -- <em>definire file di configurazione e validarla</em></li>
+                        <li class="fragment"><strong>Routing</strong> -- <em>mappa una richiesta http a un set di variabili di configurazione</em></li>
+                        <li class="fragment"><strong>HttpKernel</strong> -- <em>struttura per convertire una Request in una Response, base per full stack framework</em></li>
+                        <li class="fragment"><strong>Security</strong> -- <em>sistema di sicurezza completo (anche troppo)</em></li>
+                    </ul>
                 </section>
 
                 <section>
@@ -165,7 +284,7 @@ $fs->mkdir('watta!');</code></pre>
                 </section>
 
                 <section>
-                    <h1>una request symfony</h1>
+                    <h2>una request symfony</h2>
                 </section>
 
                 <section>
