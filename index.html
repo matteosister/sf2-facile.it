@@ -54,85 +54,40 @@
                 <section>
                     <img src="images/lego.jpg" width="400" />
                     <p><strong>un insieme di <a href="https://github.com/symfony/symfony/tree/master/src/Symfony/Component">componenti</a>
-                        (quasi) disaccoppiati che svolgono uno specifico task</strong></p>
+                        (quasi) disaccoppiati</strong></p>
                     <p>Zend Framework 2 ha la stessa impostazione</p>
                     <p>i componenti sono i <em>mattoncini</em> base di Symfony2, creano uno strato sopra il php, per astrarre
-                        compiti comuni ma complicati se eseguiti in php puro. Sono testati, sicuri e open source</p>
+                        compiti comuni ma complicati se eseguiti in php puro.</p>
+                    <p>Sono testati, sicuri e open source</p>
                 </section>
 
                 <section>
-                    <h3>Per usarli non serve Symfony2</h3>
+                    <h2>come gestire tutti questi pacchetti e librerie?</h2>
+                    <h3>e gli aggiornamenti?</h3>
+                    <h3>e le dipendenze?</h3>
                 </section>
 
                 <section>
-                    <h2>Console</h2>
-                    <h4>Scrivere comandi per console in php</h4>
-                    <p><small>gestione di task per cron, manutenzioni al db etc</small></p>
+                    <h1>composer</h1>
                 </section>
 
                 <section>
-                    <pre><code contenteditable class="php">class GreetCommand extends Command
-{
-    protected function configure()
-    {
-        $this
-            ->setName('demo:greet')
-            ->setDescription('Greet someone')
-            ->addArgument(
-                'name',
-                InputArgument::OPTIONAL,
-                'Who do you want to greet?'
-            )
-            ->addOption(
-               'yell',
-               null,
-               InputOption::VALUE_NONE,
-               'If set, the task will yell in uppercase letters'
-            )
-        ;
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $name = $input->getArgument('name');
-        if ($name) {
-            $text = 'Hello '.$name;
-        } else {
-            $text = 'Hello';
-        }
-
-        if ($input->getOption('yell')) {
-            $text = strtoupper($text);
-        }
-
-        $output->writeln($text);
-    }
-}</code></pre>
+                    <a href="http://getcomposer.org/">getcomposer.org</a>
+                    <p></p>
+                    <img src="images/getcomposer.png" />
                 </section>
 
                 <section>
-                    <small>console.php</small>
-                    <pre><code class="php">#!/usr/bin/env php
-# app/console
-&lt;?php
-
-use Acme\DemoBundle\Command\GreetCommand;
-use Symfony\Component\Console\Application;
-
-$application = new Application();
-$application->add(new GreetCommand);
-$application->run();
-
-</code></pre>
-                    <small>command line</small>
-                    <pre><code class="php">$ php console.php demo:greet Facile
-Hello Facile
-</code></pre>
+                    <a href="http://packagist.org">packagist.org</a>
+                    <p></p>
+                    <img src="images/phpunit.png">
                 </section>
 
                 <section>
-                    <h2>Console di Symfony2</h2>
-                    <img src="images/console.png" />
+                    <h3>Per usare i componenti di Symfony non serve usare tutto il framework</h3>
+                    <h4>è semplice codice php</h4>
+                    <h3>serve solo un autoloader PSR-*</h3>
+                    <h4>con composer è tutto più semplice</h4>
                 </section>
 
                 <section>
@@ -238,6 +193,77 @@ $values = $form->getPhpValues();
                 </section>
 
                 <section>
+                    <h2>Console</h2>
+                    <h4>Scrivere comandi per console in php</h4>
+                    <p><small>gestione di task per cron, manutenzioni al db etc</small></p>
+                </section>
+
+                <section>
+                    <pre><code contenteditable class="php">class GreetCommand extends Command
+{
+    protected function configure()
+    {
+        $this
+            ->setName('demo:greet')
+            ->setDescription('Greet someone')
+            ->addArgument(
+                'name',
+                InputArgument::OPTIONAL,
+                'Who do you want to greet?'
+            )
+            ->addOption(
+               'yell',
+               null,
+               InputOption::VALUE_NONE,
+               'If set, the task will yell in uppercase letters'
+            )
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $name = $input->getArgument('name');
+        if ($name) {
+            $text = 'Hello '.$name;
+        } else {
+            $text = 'Hello';
+        }
+
+        if ($input->getOption('yell')) {
+            $text = strtoupper($text);
+        }
+
+        $output->writeln($text);
+    }
+}</code></pre>
+                </section>
+
+                <section>
+                    <small>console.php</small>
+                    <pre><code class="php">#!/usr/bin/env php
+# app/console
+&lt;?php
+
+use Acme\DemoBundle\Command\GreetCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new GreetCommand);
+$application->run();
+
+</code></pre>
+                    <small>command line</small>
+                    <pre><code class="php">$ php console.php demo:greet Facile
+Hello Facile
+</code></pre>
+                </section>
+
+                <section>
+                    <h2>Console di Symfony2</h2>
+                    <img src="images/console.png" />
+                </section>
+
+                <section>
                     <h2>come si utilizzano?</h2>
                     <pre><code class="bash">$ mkdir project
 $ cd project
@@ -266,11 +292,7 @@ $fs->mkdir('watta!');</code></pre>
                 </section>
 
                 <section>
-                    <p>Al di sopra dei componenti ci sono i <strong>Bundle</strong></p>
-                    <p>Ogni cosa è un bundle in Symfony2.</p>
-                    <p>Symfony2 stesso in realtà è un bundle sviluppato da Sensio Labs che si chiama
-                        <a href="https://github.com/symfony/symfony/tree/master/src/Symfony/Bundle/FrameworkBundle">FrameworkBundle</a></p>
-                    <p>creare un sito in Symfony2 == creare un bundle</p>
+                    <h1>ma Symfony?</h1>
                 </section>
 
                 <section>
@@ -289,23 +311,107 @@ $fs->mkdir('watta!');</code></pre>
 
                 <section>
                     <p><small># app/config/routing.yml</small></p>
-                    <pre><code contenteditable>
-contact:
+                    <pre><code contenteditable class="yml">contact:
     pattern:  /contact
-    defaults: { _controller: FacileCmsBundle:Main:spider }
-                    </code></pre>
+    defaults: { _controller: FacileCmsBundle:Main:spider }</code></pre>
                     <div class="fragment">
                         <small># src/Facile/CmsBundle/Controller/MainController.php</small>
-                        <pre><code contenteditable>
-class MainController
+                        <pre><code contenteditable class="php">class MainController
 {
     public function spiderAction()
     {
         return new Response('Spider!');
     }
-}
-                        </code></pre>
+}</code></pre>
                     </div>
+                </section>
+
+                <section>
+                    <p>Al di sopra dei componenti ci sono i <strong>Bundle</strong></p>
+                    <p><em>Ogni cosa è un bundle in Symfony2.</em></p>
+                    <p>Symfony2 stesso in realtà è un bundle sviluppato da Sensio Labs che si chiama
+                        <a href="https://github.com/symfony/symfony/tree/master/src/Symfony/Bundle/FrameworkBundle">FrameworkBundle</a></p>
+                    <p>creare un sito in Symfony2 == creare un bundle</p>
+                </section>
+
+                <section>
+                    <h2>knpbundles.com</h2>
+                    <img src="images/knpbundles.png" />
+                </section>
+
+                <section>
+                    <h2>i bundle più conosciti</h2>
+                </section>
+
+                <section>
+                    <p>SonataAdminBundle</p>
+                    <p><small>backend generator</small></p>
+                    <p>gestione dei backend tramite classi php, i form di symfony e il container</p>
+                    <p>CRUD, tutto è customizzabile (pagando)</p>
+                </section>
+
+                <section>
+                    <p>FOSUserBundle</p>
+                    <p><small>gestione utente / login</small></p>
+                    <p>form login, recupero password, conferma</p>
+                </section>
+
+                <section>
+                    <p>AsseticBundle</p>
+                    <p><small>gestione degli assets</small></p>
+                    <p>in sviluppo compila on-the-fly js e css</p>
+                    <p>supporta filtri come sass, compass, less, coffeescript, closures, cssrewrite</p>
+                    <p>uglifyjs, minify dei file in prod, con dump su filesystem</p>
+                    <p>sul server di produzione, un solo file per css e uno solo file per javascript, minificati</p>
+                    <p>senza fare nulla 8)</p>
+                </section>
+
+                <section>
+                    <p>SerializerBundle</p>
+                    <p><small>serializzazione di oggetti (api, web serivices)</small></p>
+                    <pre><code class="twig">{{ articoli|serialize|raw }}
+{{ articoli|serialize('xml') }}</code></pre>
+                    <p><small>un template in twig, per renderizzare un file json</small></p>
+                    <pre><code class="json">[
+{% for articolo in articoli %}
+    {{ articolo|serialize|raw }}{{ loop.last ? '' : ','}}
+{% else %}
+    { "response": "non ci sono articoli" }
+{% endfor %}
+]</code></pre>
+                </section>
+
+                <section>
+                    <p>JMSI18nRoutingBundle</p>
+                    <p><small>routing multilingua</small></p>
+                    <p>rotte tradotte, con o senza prefisso</p>
+                    <pre><code>/it/articoli -> /en/articles
+/articoli -> /en/articles
+/articoli -> /articles</code></pre>
+                    <p>zero configurazione</p>
+                </section>
+
+                <section>
+                    <p>KnpMenuBundle</p>
+                    <p><small>gestione di menu ad oggetti</small></p>
+                </section>
+
+                <section>
+                    <p>LiipImagineBundle</p>
+                    <p><small>gestione delle immagini</small></p>
+                    <p>basato sulla libreria <em>Imagine</em></p>
+                    <p>gestisce il ridimensionamento e la generazione di thumbs con un interfaccia ad oggetti</p>
+                    <p>in più permette di aggiungere ombre, skew, riflessioni...</p>
+                    <p>usa imagemagick, gd2 o Gmagick con la stessa interfaccia</p>
+                    <p>generazione a runtime delle thumbs, cache automatico</p>
+                </section>
+
+                <section>
+                    <p>LiipFunctionalTestBundle</p>
+                    <p><small>test funzionali</small></p>
+                    <p>TDD!</p>
+                    <p>symfony è completamente integrato con phpunit</p>
+                    <p>non ci sono scuse per non fare test unitari e funzionali</p>
                 </section>
 			</div>
 
