@@ -12,7 +12,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
 		<link rel="stylesheet" href="css/custom.css">
 
@@ -66,8 +66,84 @@
 
                 <section>
                     <h2>Console</h2>
+                    <h4>Scrivere comandi per console in php</h4>
+                    <p><small>gestione di task per cron, manutenzioni al db etc</small></p>
                     <img src="images/console.png" />
-                    <p><small><a href="https://github.com/symfony/Console">https://github.com/symfony/Console</a></small></p>
+                </section>
+
+                <section>
+                    <h2>Filesystem</h2>
+                    <h4>Gestione filesystem</h4>
+                    <pre><code contenteditable>use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
+
+$fs = new Filesystem();
+
+try {
+    $fs->mkdir('/tmp/random/dir/' . mt_rand());
+} catch (IOException $e) {
+    echo "An error occurred while creating your directory";
+}
+// this directory exists, return true
+$fs->exists('/tmp/photos');
+// works only if image-ICC has been modified after image.jpg
+$fs->copy('image-ICC.jpg', 'image.jpg');
+// image.jpg will be overridden
+$fs->copy('image-ICC.jpg', 'image.jpg', true);</code></pre>
+                </section>
+
+                <section>
+                    <h2>Process</h2>
+                    <h4>Eseguire comandi come sub-process</h4>
+                    <pre><code>
+use Symfony\Component\Process\Process;
+
+$process = new Process('ls -lsa');
+$process->setTimeout(3600);
+$process->run();
+if (!$process->isSuccessful()) {
+    throw new \RuntimeException($process->getErrorOutput());
+}
+
+print $process->getOutput();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Event Dispatcher</h2>
+                    <h4>gestione di eventi (emitter, listenter e subscriber) dove non si può usare l'OO</h4>
+                    <p><small>ridistribuzione di codice, plugin systems</small></p>
+                    <pre><code contenteditable>
+use Symfony\Component\EventDispatcher\EventDispatcher;
+$dispatcher = new EventDispatcher();
+
+$listener = new AcmeListener();
+$dispatcher->addListener('foo.action', array($listener, 'onFooAction'));
+
+// closures
+$dispatcher->addListener('foo.action', function (Event $event) {
+    // will be executed when the foo.action event is dispatched
+});
+
+// create the FilterOrderEvent and dispatch it
+$event = new FilterOrderEvent($order);
+$dispatcher->dispatch(StoreEvents::STORE_ORDER, $event);
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>come si utilizzano?</h2>
+                    <pre><code>$ mkdir project
+$ cd project
+$ composer require symfony/filesystem 2.1.*</code></pre>
+                    <p>composer crea la cartella vendor, scarica le dipendenze e crea l'autoloader</p>
+                    <p>possiamo usarlo nel nostro codice, basta includere l'autoloader</p>
+                    <pre><code contenteditable>include __DIR__.'/vendor/autoload.php';
+
+use Symfony\Component\Filesystem\Filesystem;
+
+$fs = new Filesystem();
+$fs->mkdir('watta!');</code></pre>
                 </section>
 
                 <section>

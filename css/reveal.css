@@ -529,7 +529,7 @@ body {
 
 .reveal .slides {
 	position: absolute;
-	max-width: 900px;
+	/*max-width: 1500px;*/
 	min-height: 600px;
 	width: 80%;
 	left: 50%;
